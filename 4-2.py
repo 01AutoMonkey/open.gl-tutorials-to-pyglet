@@ -148,7 +148,6 @@ glUniformMatrix4fv(uniProj, 1, GL_FALSE, proj_ctype)
 
 uniModel = glGetUniformLocation(shader.handle, "model");
 
-
 # Set clear color
 glClearColor(0.0, 0.0, 0.0, 1.0)
 
@@ -160,7 +159,8 @@ def on_draw():
 	
 	# Calculate transformation
 	model = Quaternion.new_rotate_axis(time.clock() * math.pi, Vector3(0, 0, 1))
-	model = model.get_matrix()[:]
+	model = model.get_matrix()
+	model = model[:]
 	model_ctype = (GLfloat * len(model))(*model)
 	glUniformMatrix4fv(uniModel, 1, GL_FALSE, model_ctype);
 
