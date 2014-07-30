@@ -1,9 +1,7 @@
 import pyglet
 from pyglet.gl import *
-from shader import Shader
-from ctypes import pointer, sizeof
-import math
-import time
+from ctypes import *
+import math, time
 
 
 window = pyglet.window.Window(800, 600, "OpenGL")
@@ -11,7 +9,7 @@ window.set_location(100, 100)
 
 
 # Shaders (Vertex and Fragment shaders)
-vertex = """
+vertexSource = """
 #version 150 core
 
 in vec2 position;
@@ -27,7 +25,7 @@ void main() {
    gl_Position = vec4(position, 0.0, 1.0);
 }
 """
-fragment = """
+fragmentSource = """
 #version 150 core
 
 in vec3 Color;
@@ -41,9 +39,6 @@ void main() {
    outColor = texture(tex, Texcoord) * vec4(Color, 1.0);
 }
 """
-## Compiling shaders and combining them into a program 
-shader = Shader(vertex, fragment)
-shader.bind() #glUseProgram
 
 
 # Vertex Input
@@ -70,6 +65,30 @@ glBindBuffer(GL_ARRAY_BUFFER, vbo)
 glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_ctype), vertices_ctype, GL_STATIC_DRAW)
 
 
+# Compile shaders and combining them into a program 
+## Create and compile the vertex shader
+count = len(vertexSource)
+src = (c_char_p * count)(*vertexSource)
+vertexShader = glCreateShader(GL_VERTEX_SHADER)
+glShaderSource(vertexShader, count, cast(pointer(src), POINTER(POINTER(c_char))), None)
+glCompileShader(vertexShader)
+
+## Create and compile the fragment shader
+count = len(fragmentSource)
+src = (c_char_p * count)(*fragmentSource)
+fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+glShaderSource(fragmentShader, count, cast(pointer(src), POINTER(POINTER(c_char))), None)
+glCompileShader(fragmentShader)
+
+## Link the vertex and fragment shader into a shader program
+shaderProgram = glCreateProgram()
+glAttachShader(shaderProgram, vertexShader)
+glAttachShader(shaderProgram, fragmentShader)
+glBindFragDataLocation(shaderProgram, 0, "outColor")
+glLinkProgram(shaderProgram)
+glUseProgram(shaderProgram)
+
+
 # Element array
 ebo = GLuint()
 glGenBuffers(1, pointer(ebo))
@@ -83,16 +102,16 @@ glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements_ctype), elements_ctype, GL
 
 
 # Making the link between vertex data and attributes
-## shader.handle holds the value of glCreateProgram()
-posAttrib = glGetAttribLocation(shader.handle, "position");
+## shaderProgram holds the value of glCreateProgram()
+posAttrib = glGetAttribLocation(shaderProgram, "position");
 glEnableVertexAttribArray(posAttrib);
 glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), 0);
 
-colAttrib = glGetAttribLocation(shader.handle, "color");
+colAttrib = glGetAttribLocation(shaderProgram, "color");
 glEnableVertexAttribArray(colAttrib);
 glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), 2 * sizeof(GLfloat));
 
-texAttrib = glGetAttribLocation(shader.handle, "texcoord");
+texAttrib = glGetAttribLocation(shaderProgram, "texcoord");
 glEnableVertexAttribArray(texAttrib);
 glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), 5 * sizeof(GLfloat));
 
