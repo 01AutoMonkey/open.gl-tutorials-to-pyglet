@@ -14,19 +14,23 @@ vertexSource = """
 #version 150 core
 
 in vec2 position;
+in vec3 color;
 in vec2 texcoord;
 
+out vec3 Color;
 out vec2 Texcoord;
 uniform mat4 trans;
 
 void main() {
-   Texcoord = texcoord;
-   gl_Position = trans * vec4(position, 0.0, 1.0);
+	Color = color;
+	Texcoord = texcoord;
+	gl_Position = trans * vec4(position, 0.0, 1.0);
 }
 """
 fragmentSource = """
 #version 150 core
 
+in vec3 Color;
 in vec2 Texcoord;
 
 out vec4 outColor;
@@ -35,7 +39,7 @@ uniform sampler2D texKitten;
 uniform sampler2D texPuppy;
 
 void main() {
-   outColor = mix(texture(texKitten, Texcoord), texture(texPuppy, Texcoord), 0.5);
+	outColor = mix(texture(texKitten, Texcoord), texture(texPuppy, Texcoord), 0.5);
 }
 """
 
@@ -50,11 +54,11 @@ glBindVertexArray(vao)
 vbo = GLuint()
 glGenBuffers(1, pointer(vbo)) # Generate 1 buffer
 
-#           Position    Texcoords
-vertices = [-0.5,  0.5, 0.0, 1.0,
-			 0.5,  0.5, 1.0, 1.0,
-			 0.5, -0.5, 1.0, 0.0,
-			-0.5, -0.5, 0.0, 0.0]
+##          Position    Color          Texcoords
+vertices = [-0.5,  0.5, 1.0, 0.0, 0.0, 0.0, 1.0, # Top-left
+		     0.5,  0.5, 0.0, 1.0, 0.0, 1.0, 1.0, # Top-right
+		     0.5, -0.5, 0.0, 0.0, 1.0, 1.0, 0.0, # Bottom-right
+		    -0.5, -0.5, 1.0, 1.0, 1.0, 0.0, 0.0]  # Bottom-left
 
 ## Convert the verteces array to a GLfloat array, usable by glBufferData
 vertices_gl = (GLfloat * len(vertices))(*vertices)
@@ -101,14 +105,18 @@ glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements_gl), elements_gl, GL_STATI
 
 
 # Making the link between vertex data and attributes
-## shaderProgram holds the value of glCreateProgram()
 posAttrib = glGetAttribLocation(shaderProgram, "position");
 glEnableVertexAttribArray(posAttrib);
-glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0);
+glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), 0);
+
+## colAttrib returns -1 (is not used)
+#colAttrib = glGetAttribLocation(shaderProgram, "color");
+#glEnableVertexAttribArray(colAttrib);
+#glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), 2 * sizeof(GLfloat));
 
 texAttrib = glGetAttribLocation(shaderProgram, "texcoord");
 glEnableVertexAttribArray(texAttrib);
-glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 2 * sizeof(GLfloat));
+glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), 5 * sizeof(GLfloat));
 
 
 # Load textures
@@ -147,12 +155,11 @@ glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
 uniTrans = glGetUniformLocation(shaderProgram, "trans");
 
-# Set clear color
-glClearColor(0.0, 0.0, 0.0, 1.0)
-
 
 @window.event
 def on_draw():
+	# Set clear color
+	glClearColor(0.0, 0.0, 0.0, 1.0)
 	# Clear the screen to black
 	glClear(GL_COLOR_BUFFER_BIT)
 	

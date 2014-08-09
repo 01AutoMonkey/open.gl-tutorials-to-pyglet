@@ -20,9 +20,9 @@ out vec3 Color;
 out vec2 Texcoord;
 
 void main() {
-   Color = color;
-   Texcoord = texcoord;
-   gl_Position = vec4(position, 0.0, 1.0);
+	Color = color;
+	Texcoord = texcoord;
+	gl_Position = vec4(position, 0.0, 1.0);
 }
 """
 fragmentSource = """
@@ -36,7 +36,7 @@ out vec4 outColor;
 uniform sampler2D tex;
 
 void main() {
-   outColor = texture(tex, Texcoord) * vec4(Color, 1.0);
+	outColor = texture(tex, Texcoord) * vec4(Color, 1.0);
 }
 """
 
@@ -51,11 +51,11 @@ glBindVertexArray(vao)
 vbo = GLuint()
 glGenBuffers(1, pointer(vbo)) # Generate 1 buffer
 
-#           Position    Color          Texcoords
-vertices = [-0.5,  0.5, 1.0, 0.0, 0.0, 0.0, 1.0,
-			 0.5,  0.5, 0.0, 1.0, 0.0, 1.0, 1.0,
-			 0.5, -0.5, 0.0, 0.0, 1.0, 1.0, 0.0,
-			-0.5, -0.5, 1.0, 1.0, 1.0, 0.0, 0.0]
+##          Position    Color          Texcoords
+vertices = [-0.5,  0.5, 1.0, 0.0, 0.0, 0.0, 1.0, # Top-left
+		     0.5,  0.5, 0.0, 1.0, 0.0, 1.0, 1.0, # Top-right
+		     0.5, -0.5, 0.0, 0.0, 1.0, 1.0, 0.0, # Bottom-right
+		    -0.5, -0.5, 1.0, 1.0, 1.0, 0.0, 0.0]  # Bottom-left
 
 ## Convert the verteces array to a GLfloat array, usable by glBufferData
 vertices_ctype = (GLfloat * len(vertices))(*vertices)
@@ -102,7 +102,6 @@ glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements_ctype), elements_ctype, GL
 
 
 # Making the link between vertex data and attributes
-## shaderProgram holds the value of glCreateProgram()
 posAttrib = glGetAttribLocation(shaderProgram, "position");
 glEnableVertexAttribArray(posAttrib);
 glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), 0);
@@ -131,12 +130,10 @@ glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 
-# Set clear color
-glClearColor(0.0, 0.0, 0.0, 1.0)
-
-
 @window.event
 def on_draw():
+	# Set clear color
+	glClearColor(0.0, 0.0, 0.0, 1.0)
 	# Clear the screen to black
 	glClear(GL_COLOR_BUFFER_BIT)
 

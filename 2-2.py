@@ -16,7 +16,7 @@ in vec2 position;
 
 void main()
 {
-    gl_Position = vec4(position, 0.0, 1.0);
+	gl_Position = vec4(position, 0.0, 1.0);
 }
 """
 fragmentSource = """
@@ -28,7 +28,7 @@ out vec4 outColor;
 
 void main()
 {
-    outColor = vec4(triangleColor, 1.0);
+	outColor = vec4(triangleColor, 1.0);
 }
 """
 
@@ -79,16 +79,11 @@ glUseProgram(shaderProgram)
 
 
 # Making the link between vertex data and attributes
-## shaderProgram holds the value of glCreateProgram()
 posAttrib = glGetAttribLocation(shaderProgram, "position")
 glEnableVertexAttribArray(posAttrib)
 glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0)
 
 uniColor = glGetUniformLocation(shaderProgram, "triangleColor")
-
-
-# Set clear color
-glClearColor(0.0, 0.0, 0.0, 1.0)
 
 
 @window.event
@@ -97,6 +92,8 @@ def on_draw():
 	alpha = (math.sin(time.clock() * 4.0) + 1.0) / 2.0
 	glUniform3f(uniColor, alpha, 0.0, 0.0)
 
+	# Set clear color
+	glClearColor(0.0, 0.0, 0.0, 1.0)
 	# Clear the screen to black
 	glClear(GL_COLOR_BUFFER_BIT)
 

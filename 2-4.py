@@ -19,8 +19,8 @@ out vec3 Color;
 
 void main()
 {
-    Color = color;
-    gl_Position = vec4(position, 0.0, 1.0);
+	Color = color;
+	gl_Position = vec4(position, 0.0, 1.0);
 }
 """
 fragmentSource = """
@@ -32,7 +32,7 @@ out vec4 outColor;
 
 void main()
 {
-    outColor = vec4(Color, 1.0);
+	outColor = vec4(Color, 1.0);
 }
 """
 
@@ -96,7 +96,6 @@ glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements_ctype), elements_ctype, GL
 
 
 # Making the link between vertex data and attributes
-## shaderProgram holds the value of glCreateProgram()
 posAttrib = glGetAttribLocation(shaderProgram, "position")
 glEnableVertexAttribArray(posAttrib)
 glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE,
@@ -108,12 +107,10 @@ glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE,
                        5*sizeof(GLfloat), 2*sizeof(GLfloat));
 
 
-# Set clear color
-glClearColor(0.0, 0.0, 0.0, 1.0)
-
-
 @window.event
 def on_draw():
+	# Set clear color
+	glClearColor(0.0, 0.0, 0.0, 1.0)
 	# Clear the screen to black
 	glClear(GL_COLOR_BUFFER_BIT)
 

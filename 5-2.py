@@ -4,8 +4,8 @@ from ctypes import *
 from euclid import *
 import math, time
 
-
-window = pyglet.window.Window(800, 600, "OpenGL")
+allowstencil = pyglet.gl.Config(stencil_size=8)
+window = pyglet.window.Window(800, 600, "OpenGL", config=allowstencil)
 window.set_location(100, 100)
 
 
@@ -13,7 +13,7 @@ window.set_location(100, 100)
 vertexSource = """
 #version 150
 
-in vec2 position;
+in vec3 position;
 in vec3 color;
 in vec2 texcoord;
 
@@ -23,11 +23,12 @@ out vec2 Texcoord;
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 proj;
+uniform vec3 overrideColor;
 
 void main() {
-	Color = color;
+	Color = overrideColor * color;
 	Texcoord = texcoord;
-	gl_Position = proj * view * model * vec4(position, 0.0, 1.0);
+	gl_Position = proj * view * model * vec4(position, 1.0);
 }
 """
 fragmentSource = """
@@ -42,9 +43,13 @@ uniform sampler2D texKitten;
 uniform sampler2D texPuppy;
 
 void main() {
-	outColor = mix(texture(texKitten, Texcoord), texture(texPuppy, Texcoord), 0.5);
+	outColor = vec4(Color, 1.0) * mix(texture(texKitten, Texcoord), texture(texPuppy, Texcoord), 0.5);
 }
 """
+
+
+# Initialize OpenGL
+glEnable(GL_DEPTH_TEST);
 
 
 # Vertex Input
@@ -57,12 +62,56 @@ glBindVertexArray(vao)
 vbo = GLuint()
 glGenBuffers(1, pointer(vbo)) # Generate 1 buffer
 
-##          Position    Color          Texcoords
-vertices = [-0.5,  0.5, 1.0, 0.0, 0.0, 0.0, 1.0, # Top-left
-		     0.5,  0.5, 0.0, 1.0, 0.0, 1.0, 1.0, # Top-right
-		     0.5, -0.5, 0.0, 0.0, 1.0, 1.0, 0.0, # Bottom-right
-		    -0.5, -0.5, 1.0, 1.0, 1.0, 0.0, 0.0]  # Bottom-left
+vertices = [-0.5, -0.5, -0.5, 1.0, 1.0, 1.0, 0.0, 0.0,
+			 0.5, -0.5, -0.5, 1.0, 1.0, 1.0, 1.0, 0.0,
+			 0.5,  0.5, -0.5, 1.0, 1.0, 1.0, 1.0, 1.0,
+			 0.5,  0.5, -0.5, 1.0, 1.0, 1.0, 1.0, 1.0,
+			-0.5,  0.5, -0.5, 1.0, 1.0, 1.0, 0.0, 1.0,
+			-0.5, -0.5, -0.5, 1.0, 1.0, 1.0, 0.0, 0.0,
 
+			-0.5, -0.5,  0.5, 1.0, 1.0, 1.0, 0.0, 0.0,
+			 0.5, -0.5,  0.5, 1.0, 1.0, 1.0, 1.0, 0.0,
+			 0.5,  0.5,  0.5, 1.0, 1.0, 1.0, 1.0, 1.0,
+			 0.5,  0.5,  0.5, 1.0, 1.0, 1.0, 1.0, 1.0,
+			-0.5,  0.5,  0.5, 1.0, 1.0, 1.0, 0.0, 1.0,
+			-0.5, -0.5,  0.5, 1.0, 1.0, 1.0, 0.0, 0.0,
+
+			-0.5,  0.5,  0.5, 1.0, 1.0, 1.0, 1.0, 0.0,
+			-0.5,  0.5, -0.5, 1.0, 1.0, 1.0, 1.0, 1.0,
+			-0.5, -0.5, -0.5, 1.0, 1.0, 1.0, 0.0, 1.0,
+			-0.5, -0.5, -0.5, 1.0, 1.0, 1.0, 0.0, 1.0,
+			-0.5, -0.5,  0.5, 1.0, 1.0, 1.0, 0.0, 0.0,
+			-0.5,  0.5,  0.5, 1.0, 1.0, 1.0, 1.0, 0.0,
+
+			 0.5,  0.5,  0.5, 1.0, 1.0, 1.0, 1.0, 0.0,
+			 0.5,  0.5, -0.5, 1.0, 1.0, 1.0, 1.0, 1.0,
+			 0.5, -0.5, -0.5, 1.0, 1.0, 1.0, 0.0, 1.0,
+			 0.5, -0.5, -0.5, 1.0, 1.0, 1.0, 0.0, 1.0,
+			 0.5, -0.5,  0.5, 1.0, 1.0, 1.0, 0.0, 0.0,
+			 0.5,  0.5,  0.5, 1.0, 1.0, 1.0, 1.0, 0.0,
+
+			-0.5, -0.5, -0.5, 1.0, 1.0, 1.0, 0.0, 1.0,
+			 0.5, -0.5, -0.5, 1.0, 1.0, 1.0, 1.0, 1.0,
+			 0.5, -0.5,  0.5, 1.0, 1.0, 1.0, 1.0, 0.0,
+			 0.5, -0.5,  0.5, 1.0, 1.0, 1.0, 1.0, 0.0,
+			-0.5, -0.5,  0.5, 1.0, 1.0, 1.0, 0.0, 0.0,
+			-0.5, -0.5, -0.5, 1.0, 1.0, 1.0, 0.0, 1.0,
+
+			-0.5,  0.5, -0.5, 1.0, 1.0, 1.0, 0.0, 1.0,
+			 0.5,  0.5, -0.5, 1.0, 1.0, 1.0, 1.0, 1.0,
+			 0.5,  0.5,  0.5, 1.0, 1.0, 1.0, 1.0, 0.0,
+			 0.5,  0.5,  0.5, 1.0, 1.0, 1.0, 1.0, 0.0,
+			-0.5,  0.5,  0.5, 1.0, 1.0, 1.0, 0.0, 0.0,
+			-0.5,  0.5, -0.5, 1.0, 1.0, 1.0, 0.0, 1.0,
+
+			-1.0, -1.0, -0.5, 0.0, 0.0, 0.0, 0.0, 0.0,
+			 1.0, -1.0, -0.5, 0.0, 0.0, 0.0, 1.0, 0.0,
+			 1.0,  1.0, -0.5, 0.0, 0.0, 0.0, 1.0, 1.0,
+			 1.0,  1.0, -0.5, 0.0, 0.0, 0.0, 1.0, 1.0,
+			-1.0,  1.0, -0.5, 0.0, 0.0, 0.0, 0.0, 1.0,
+			-1.0, -1.0, -0.5, 0.0, 0.0, 0.0, 0.0, 0.0
+			]
+			
 ## Convert the verteces array to a GLfloat array, usable by glBufferData
 vertices_gl = (GLfloat * len(vertices))(*vertices)
 
@@ -95,31 +144,18 @@ glLinkProgram(shaderProgram)
 glUseProgram(shaderProgram)
 
 
-# Element array
-ebo = GLuint()
-glGenBuffers(1, pointer(ebo))
-
-elements = [0, 1, 2,
-			2, 3, 0]
-elements_gl = (GLuint * len(elements))(*elements)
-
-glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements_gl), elements_gl, GL_STATIC_DRAW);
-
-
 # Making the link between vertex data and attributes
 posAttrib = glGetAttribLocation(shaderProgram, "position");
 glEnableVertexAttribArray(posAttrib);
-glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), 0);
+glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), 0);
 
-## colAttrib returns -1 (is not used)
-#colAttrib = glGetAttribLocation(shaderProgram, "color");
-#glEnableVertexAttribArray(colAttrib);
-#glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), 2 * sizeof(GLfloat));
+colAttrib = glGetAttribLocation(shaderProgram, "color");
+glEnableVertexAttribArray(colAttrib);
+glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), 3 * sizeof(GLfloat));
 
 texAttrib = glGetAttribLocation(shaderProgram, "texcoord");
 glEnableVertexAttribArray(texAttrib);
-glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), 5 * sizeof(GLfloat));
+glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), 6 * sizeof(GLfloat));
 
 
 # Load textures
@@ -156,8 +192,10 @@ glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
+uniModel = glGetUniformLocation(shaderProgram, "model");
+
 # Set up projection
-eye = Vector3(1.2, 1.2, 1.2)
+eye = Vector3(2.5, 2.5, 2.0)
 at = Vector3(0.0, 0.0, 0.0)
 up = Vector3(0.0, 0.0, 1.0)
 view = Matrix4.new_look_at(eye, at, up)
@@ -172,25 +210,52 @@ proj_ctype = (GLfloat * len(proj))(*proj)
 uniProj = glGetUniformLocation(shaderProgram, "proj")
 glUniformMatrix4fv(uniProj, 1, GL_FALSE, proj_ctype)
 
-uniModel = glGetUniformLocation(shaderProgram, "model");
+uniColor = glGetUniformLocation(shaderProgram, "overrideColor");
 
 
 @window.event
 def on_draw():
 	# Set clear color
-	glClearColor(0.0, 0.0, 0.0, 1.0)
-	# Clear the screen to black
-	glClear(GL_COLOR_BUFFER_BIT)
+	glClearColor(1.0, 1.0, 1.0, 1.0)
+	# Clear the screen to white and ?
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	# Calculate transformation
 	model = Quaternion.new_rotate_axis(time.clock() * math.pi, Vector3(0, 0, 1))
 	model = model.get_matrix()
-	model = model[:]
-	model_ctype = (GLfloat * len(model))(*model)
-	glUniformMatrix4fv(uniModel, 1, GL_FALSE, model_ctype);
+	model_list = model[:]
+	model_list_ctype = (GLfloat * len(model_list))(*model_list)
+	glUniformMatrix4fv(uniModel, 1, GL_FALSE, model_list_ctype);
 
 	# Draw a rectangle from the 2 triangles using 6 indices
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0)
+	glDrawArrays(GL_TRIANGLES, 0, 36)
+
+	glEnable(GL_STENCIL_TEST);
+
+	# Draw floor
+	glStencilFunc(GL_ALWAYS, 1, 0xFF);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+	glStencilMask(0xFF);
+	glDepthMask(GL_FALSE);
+	glClear(GL_STENCIL_BUFFER_BIT);
+	    
+	glDrawArrays(GL_TRIANGLES, 36, 6);
+
+	# Draw cube reflection
+	glStencilFunc(GL_EQUAL, 1, 0xFF);
+	glStencilMask(0x00);
+	glDepthMask(GL_TRUE);
+
+	model.translate(0, 0, -1).scale(1, 1, -1)
+	model_list = model[:]
+	model_list_ctype = (GLfloat * len(model_list))(*model_list)
+	glUniformMatrix4fv(uniModel, 1, GL_FALSE, model_list_ctype);
+
+	glUniform3f(uniColor, 0.3, 0.3, 0.3);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glUniform3f(uniColor, 1.0, 1.0, 1.0);
+
+	glDisable(GL_STENCIL_TEST);
 
 @window.event
 def on_key_press(symbol, modifiers):
