@@ -69,7 +69,7 @@ glCompileShader(vertexShader)
 ## Create and compile the fragment shader
 count = len(fragmentSource)
 src = (c_char_p * count)(*fragmentSource)
-fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+fragmentShader = glCreateShader(GL_FRAGMENT_SHADER)
 glShaderSource(fragmentShader, count, cast(pointer(src), POINTER(POINTER(c_char))), None)
 glCompileShader(fragmentShader)
 
@@ -88,10 +88,10 @@ glEnableVertexAttribArray(posAttrib)
 glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE,
 						5*sizeof(GLfloat), 0)
 
-colAttrib = glGetAttribLocation(shaderProgram, "color");
-glEnableVertexAttribArray(colAttrib);
+colAttrib = glGetAttribLocation(shaderProgram, "color")
+glEnableVertexAttribArray(colAttrib)
 glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE,
-                       5*sizeof(GLfloat), 2*sizeof(GLfloat));
+                       5*sizeof(GLfloat), 2*sizeof(GLfloat))
 
 
 @window.event

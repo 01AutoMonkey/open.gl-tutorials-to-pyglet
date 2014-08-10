@@ -62,7 +62,7 @@ glCompileShader(vertexShader)
 ## Create and compile the fragment shader
 count = len(fragmentSource)
 src = (c_char_p * count)(*fragmentSource)
-fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+fragmentShader = glCreateShader(GL_FRAGMENT_SHADER)
 glShaderSource(fragmentShader, count, cast(pointer(src), POINTER(POINTER(c_char))), None)
 glCompileShader(fragmentShader)
 
@@ -89,7 +89,7 @@ def on_draw():
 	glClear(GL_COLOR_BUFFER_BIT)
 
 	#Draw a triangle from the 3 vertices
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+	glDrawArrays(GL_TRIANGLES, 0, 3)
 
 @window.event
 def on_key_press(symbol, modifiers):

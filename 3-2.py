@@ -77,7 +77,7 @@ glCompileShader(vertexShader)
 ## Create and compile the fragment shader
 count = len(fragmentSource)
 src = (c_char_p * count)(*fragmentSource)
-fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+fragmentShader = glCreateShader(GL_FRAGMENT_SHADER)
 glShaderSource(fragmentShader, count, cast(pointer(src), POINTER(POINTER(c_char))), None)
 glCompileShader(fragmentShader)
 
@@ -98,58 +98,58 @@ elements = [0, 1, 2,
 			2, 3, 0]
 elements_gl = (GLuint * len(elements))(*elements)
 
-glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements_gl), elements_gl, GL_STATIC_DRAW);
+glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo)
+glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements_gl), elements_gl, GL_STATIC_DRAW)
 
 
 # Making the link between vertex data and attributes
-posAttrib = glGetAttribLocation(shaderProgram, "position");
-glEnableVertexAttribArray(posAttrib);
-glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), 0);
+posAttrib = glGetAttribLocation(shaderProgram, "position")
+glEnableVertexAttribArray(posAttrib)
+glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), 0)
 
 ## colAttrib returns -1 (is not used)
-#colAttrib = glGetAttribLocation(shaderProgram, "color");
-#glEnableVertexAttribArray(colAttrib);
-#glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), 2 * sizeof(GLfloat));
+#colAttrib = glGetAttribLocation(shaderProgram, "color")
+#glEnableVertexAttribArray(colAttrib)
+#glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), 2 * sizeof(GLfloat))
 
-texAttrib = glGetAttribLocation(shaderProgram, "texcoord");
-glEnableVertexAttribArray(texAttrib);
-glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), 5 * sizeof(GLfloat));
+texAttrib = glGetAttribLocation(shaderProgram, "texcoord")
+glEnableVertexAttribArray(texAttrib)
+glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), 5 * sizeof(GLfloat))
 
 
 # Load textures
 textures = [0] * 2
 textures_ctype = (GLuint * len(textures))(*textures)
-glGenTextures(2, textures_ctype);
+glGenTextures(2, textures_ctype)
 
-glActiveTexture(GL_TEXTURE0);
-glBindTexture(GL_TEXTURE_2D, textures_ctype[0]);
+glActiveTexture(GL_TEXTURE0)
+glBindTexture(GL_TEXTURE_2D, textures_ctype[0])
 
 image = pyglet.image.load("sample.png")
 width, height = image.width, image.height
 image = image.get_data('RGB', width * 3)
-glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image)
 
-glUniform1i(glGetUniformLocation(shaderProgram, "texKitten"), 0);
+glUniform1i(glGetUniformLocation(shaderProgram, "texKitten"), 0)
 
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
 
-glActiveTexture(GL_TEXTURE1);
-glBindTexture(GL_TEXTURE_2D, textures_ctype[1]);
+glActiveTexture(GL_TEXTURE1)
+glBindTexture(GL_TEXTURE_2D, textures_ctype[1])
 
 image = pyglet.image.load("sample2.png")
 width, height = image.width, image.height
 image = image.get_data('RGB', width * 3)
-glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image)
 
-glUniform1i(glGetUniformLocation(shaderProgram, "texPuppy"), 1);
+glUniform1i(glGetUniformLocation(shaderProgram, "texPuppy"), 1)
 
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
 
 
 @window.event

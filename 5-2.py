@@ -49,7 +49,7 @@ void main() {
 
 
 # Initialize OpenGL
-glEnable(GL_DEPTH_TEST);
+glEnable(GL_DEPTH_TEST)
 
 
 # Vertex Input
@@ -131,7 +131,7 @@ glCompileShader(vertexShader)
 ## Create and compile the fragment shader
 count = len(fragmentSource)
 src = (c_char_p * count)(*fragmentSource)
-fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+fragmentShader = glCreateShader(GL_FRAGMENT_SHADER)
 glShaderSource(fragmentShader, count, cast(pointer(src), POINTER(POINTER(c_char))), None)
 glCompileShader(fragmentShader)
 
@@ -145,54 +145,54 @@ glUseProgram(shaderProgram)
 
 
 # Making the link between vertex data and attributes
-posAttrib = glGetAttribLocation(shaderProgram, "position");
-glEnableVertexAttribArray(posAttrib);
-glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), 0);
+posAttrib = glGetAttribLocation(shaderProgram, "position")
+glEnableVertexAttribArray(posAttrib)
+glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), 0)
 
-colAttrib = glGetAttribLocation(shaderProgram, "color");
-glEnableVertexAttribArray(colAttrib);
-glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), 3 * sizeof(GLfloat));
+colAttrib = glGetAttribLocation(shaderProgram, "color")
+glEnableVertexAttribArray(colAttrib)
+glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), 3 * sizeof(GLfloat))
 
-texAttrib = glGetAttribLocation(shaderProgram, "texcoord");
-glEnableVertexAttribArray(texAttrib);
-glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), 6 * sizeof(GLfloat));
+texAttrib = glGetAttribLocation(shaderProgram, "texcoord")
+glEnableVertexAttribArray(texAttrib)
+glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), 6 * sizeof(GLfloat))
 
 
 # Load textures
 textures = [0] * 2
 textures_ctype = (GLuint * len(textures))(*textures)
-glGenTextures(2, textures_ctype);
+glGenTextures(2, textures_ctype)
 
-glActiveTexture(GL_TEXTURE0);
-glBindTexture(GL_TEXTURE_2D, textures_ctype[0]);
+glActiveTexture(GL_TEXTURE0)
+glBindTexture(GL_TEXTURE_2D, textures_ctype[0])
 
 image = pyglet.image.load("sample.png")
 width, height = image.width, image.height
 image = image.get_data('RGB', width * 3)
-glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image)
 
-glUniform1i(glGetUniformLocation(shaderProgram, "texKitten"), 0);
+glUniform1i(glGetUniformLocation(shaderProgram, "texKitten"), 0)
 
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
 
-glActiveTexture(GL_TEXTURE1);
-glBindTexture(GL_TEXTURE_2D, textures_ctype[1]);
+glActiveTexture(GL_TEXTURE1)
+glBindTexture(GL_TEXTURE_2D, textures_ctype[1])
 
 image = pyglet.image.load("sample2.png")
 width, height = image.width, image.height
 image = image.get_data('RGB', width * 3)
-glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image)
 
-glUniform1i(glGetUniformLocation(shaderProgram, "texPuppy"), 1);
+glUniform1i(glGetUniformLocation(shaderProgram, "texPuppy"), 1)
 
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
 
-uniModel = glGetUniformLocation(shaderProgram, "model");
+uniModel = glGetUniformLocation(shaderProgram, "model")
 
 # Set up projection
 eye = Vector3(2.5, 2.5, 2.0)
@@ -210,7 +210,7 @@ proj_ctype = (GLfloat * len(proj))(*proj)
 uniProj = glGetUniformLocation(shaderProgram, "proj")
 glUniformMatrix4fv(uniProj, 1, GL_FALSE, proj_ctype)
 
-uniColor = glGetUniformLocation(shaderProgram, "overrideColor");
+uniColor = glGetUniformLocation(shaderProgram, "overrideColor")
 
 
 @window.event
@@ -218,44 +218,44 @@ def on_draw():
 	# Set clear color
 	glClearColor(1.0, 1.0, 1.0, 1.0)
 	# Clear the screen to white and ?
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 	
 	# Calculate transformation
 	model = Quaternion.new_rotate_axis(time.clock() * math.pi, Vector3(0, 0, 1))
 	model = model.get_matrix()
 	model_list = model[:]
 	model_list_ctype = (GLfloat * len(model_list))(*model_list)
-	glUniformMatrix4fv(uniModel, 1, GL_FALSE, model_list_ctype);
+	glUniformMatrix4fv(uniModel, 1, GL_FALSE, model_list_ctype)
 
 	# Draw a rectangle from the 2 triangles using 6 indices
 	glDrawArrays(GL_TRIANGLES, 0, 36)
 
-	glEnable(GL_STENCIL_TEST);
+	glEnable(GL_STENCIL_TEST)
 
 	# Draw floor
-	glStencilFunc(GL_ALWAYS, 1, 0xFF);
-	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-	glStencilMask(0xFF);
-	glDepthMask(GL_FALSE);
-	glClear(GL_STENCIL_BUFFER_BIT);
+	glStencilFunc(GL_ALWAYS, 1, 0xFF)
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE)
+	glStencilMask(0xFF)
+	glDepthMask(GL_FALSE)
+	glClear(GL_STENCIL_BUFFER_BIT)
 	    
-	glDrawArrays(GL_TRIANGLES, 36, 6);
+	glDrawArrays(GL_TRIANGLES, 36, 6)
 
 	# Draw cube reflection
-	glStencilFunc(GL_EQUAL, 1, 0xFF);
-	glStencilMask(0x00);
-	glDepthMask(GL_TRUE);
+	glStencilFunc(GL_EQUAL, 1, 0xFF)
+	glStencilMask(0x00)
+	glDepthMask(GL_TRUE)
 
 	model.translate(0, 0, -1).scale(1, 1, -1)
 	model_list = model[:]
 	model_list_ctype = (GLfloat * len(model_list))(*model_list)
-	glUniformMatrix4fv(uniModel, 1, GL_FALSE, model_list_ctype);
+	glUniformMatrix4fv(uniModel, 1, GL_FALSE, model_list_ctype)
 
-	glUniform3f(uniColor, 0.3, 0.3, 0.3);
-	glDrawArrays(GL_TRIANGLES, 0, 36);
-	glUniform3f(uniColor, 1.0, 1.0, 1.0);
+	glUniform3f(uniColor, 0.3, 0.3, 0.3)
+	glDrawArrays(GL_TRIANGLES, 0, 36)
+	glUniform3f(uniColor, 1.0, 1.0, 1.0)
 
-	glDisable(GL_STENCIL_TEST);
+	glDisable(GL_STENCIL_TEST)
 
 @window.event
 def on_key_press(symbol, modifiers):

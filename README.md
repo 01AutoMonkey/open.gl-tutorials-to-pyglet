@@ -23,7 +23,7 @@ General notes:
 - `from pyglet.gl import *` gives you access to OpenGL.
 - To create GLfloat arrays/lists you just create an ordinary list and then convert it like so: `(GLfloat * len(list1))(*list1)` , and the same for GLuint: `(GLuint * len(list2))(*list2)`
 - You sometimes need to use python ctypes: `from ctypes import *` , in terms of the open.gl tutorials you mainly have to use pointer and sizeof for the C++ & and sizeof equivilants.
-- Shader code is the same, you just put it in a string or in a seperate file, but to use it with `glShaderSource` you have to use the `cast` ctype, `pointer` and `POINTER` like so: `glShaderSource(fragmentShader, count, cast(pointer(src), POINTER(POINTER(c_char))), None)`.
+- Shader code is the same as in C++ given it is it's own language, you just put it in a string or in a seperate file, but to use it with `glShaderSource` you have to use the `cast` ctype, `pointer` and `POINTER` like so: `glShaderSource(fragmentShader, count, cast(pointer(src), POINTER(POINTER(c_char))), None)`.
 - Texture coordinates are reversed in pyglet.
 - pyeuclid uses radians instead of degrees.
 - To use the stencil buffer you have to enable it in the window config: `allowstencil = pyglet.gl.Config(stencil_size=8)` and `window = pyglet.window.Window(800, 600, "OpenGL", config=allowstencil)`

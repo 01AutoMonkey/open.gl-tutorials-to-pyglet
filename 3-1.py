@@ -76,7 +76,7 @@ glCompileShader(vertexShader)
 ## Create and compile the fragment shader
 count = len(fragmentSource)
 src = (c_char_p * count)(*fragmentSource)
-fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+fragmentShader = glCreateShader(GL_FRAGMENT_SHADER)
 glShaderSource(fragmentShader, count, cast(pointer(src), POINTER(POINTER(c_char))), None)
 glCompileShader(fragmentShader)
 
@@ -97,37 +97,37 @@ elements = [0, 1, 2,
 			2, 3, 0]
 elements_ctype = (GLuint * len(elements))(*elements)
 
-glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements_ctype), elements_ctype, GL_STATIC_DRAW);
+glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo)
+glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements_ctype), elements_ctype, GL_STATIC_DRAW)
 
 
 # Making the link between vertex data and attributes
-posAttrib = glGetAttribLocation(shaderProgram, "position");
-glEnableVertexAttribArray(posAttrib);
-glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), 0);
+posAttrib = glGetAttribLocation(shaderProgram, "position")
+glEnableVertexAttribArray(posAttrib)
+glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), 0)
 
-colAttrib = glGetAttribLocation(shaderProgram, "color");
-glEnableVertexAttribArray(colAttrib);
-glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), 2 * sizeof(GLfloat));
+colAttrib = glGetAttribLocation(shaderProgram, "color")
+glEnableVertexAttribArray(colAttrib)
+glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), 2 * sizeof(GLfloat))
 
-texAttrib = glGetAttribLocation(shaderProgram, "texcoord");
-glEnableVertexAttribArray(texAttrib);
-glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), 5 * sizeof(GLfloat));
+texAttrib = glGetAttribLocation(shaderProgram, "texcoord")
+glEnableVertexAttribArray(texAttrib)
+glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), 5 * sizeof(GLfloat))
 
 
 # Load texture
-tex = GLuint();
-glGenTextures(1, pointer(tex));
+tex = GLuint()
+glGenTextures(1, pointer(tex))
 
 image = pyglet.image.load("sample.png")
 width, height = image.width, image.height
 image = image.get_data('RGB', width * 3)
-glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image)
 
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
 
 
 @window.event
