@@ -3,6 +3,8 @@ open.gl-tutorials-to-pyglet
 
 Translation of the http://open.gl/ OpenGL tutorials from C++ and SFML to Python and Pyglet
 
+Only tested with Pyglet 1.2.
+
 TODO:
 
 - The first 5 parts of the tutorial are done, finish the remaining 3.
