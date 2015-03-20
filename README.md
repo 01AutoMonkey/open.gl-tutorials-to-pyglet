@@ -1,9 +1,9 @@
 open.gl-tutorials-to-pyglet
 ===========================
 
-Translation of the http://open.gl/ OpenGL tutorials from C++ and SFML to Python and Pyglet
+Porting of the http://open.gl/ OpenGL tutorials sample code from C++ and SFML to Python and Pyglet
 
-Only tested with Pyglet 1.2.
+Tested with Pyglet 1.2.
 
 TODO:
 
@@ -20,7 +20,7 @@ More specifically the translation happens like so:
 - SOIL to pyglet.image
 - GLM to pyeuclid (there is a bug in the `Matrix4.new_look_at` method in the official version, use the version in this repository until the patch goes upstream)
 
-General notes:
+Notes:
 
 - `from pyglet.gl import *` gives you access to OpenGL.
 - To create GLfloat arrays/lists you just create an ordinary list and then convert it like so: `(GLfloat * len(list1))(*list1)` , and the same for GLuint: `(GLuint * len(list2))(*list2)`
