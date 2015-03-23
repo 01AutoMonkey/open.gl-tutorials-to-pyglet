@@ -1,3 +1,6 @@
+# Tutorial: https://open.gl/transformations
+# Original Sample Code: https://github.com/Overv/Open.GL/blob/master/content/code/c4_transformation.txt
+
 import pyglet
 from pyglet.gl import *
 from ctypes import *
@@ -68,7 +71,7 @@ glBindBuffer(GL_ARRAY_BUFFER, vbo)
 glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_gl), vertices_gl, GL_STATIC_DRAW)
 
 
-# Compile shaders and combining them into a program 
+# Compile shaders and combining them into a program
 ## Create and compile the vertex shader
 count = len(vertexSource)
 src = (c_char_p * count)(*vertexSource)
@@ -162,7 +165,7 @@ def on_draw():
 	glClearColor(0.0, 0.0, 0.0, 1.0)
 	# Clear the screen to black
 	glClear(GL_COLOR_BUFFER_BIT)
-	
+
 	trans = Quaternion.new_rotate_axis(time.clock() * math.pi, Vector3(0, 0, 1))
 	trans = trans.get_matrix()[:]
 	trans_ctype = (GLfloat * len(trans))(*trans)

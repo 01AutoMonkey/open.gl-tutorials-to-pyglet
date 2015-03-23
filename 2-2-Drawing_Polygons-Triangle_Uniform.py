@@ -1,3 +1,6 @@
+# Tutorial: https://open.gl/drawing
+# Original Sample Code: https://github.com/Overv/Open.GL/blob/master/content/code/c2_triangle_uniform.txt
+
 import pyglet
 from pyglet.gl import *
 from ctypes import *
@@ -13,30 +16,22 @@ vertexSource = """
 #version 150 core
 
 in vec2 position;
-in vec3 color;
-in vec2 texcoord;
 
-out vec3 Color;
-out vec2 Texcoord;
-
-void main() {
-	Color = color;
-	Texcoord = texcoord;
+void main()
+{
 	gl_Position = vec4(position, 0.0, 1.0);
 }
 """
 fragmentSource = """
 #version 150 core
 
-in vec3 Color;
-in vec2 Texcoord;
+uniform vec3 triangleColor;
 
 out vec4 outColor;
 
-uniform sampler2D tex;
-
-void main() {
-	outColor = texture(tex, Texcoord) * vec4(Color, 1.0);
+void main()
+{
+	outColor = vec4(triangleColor, 1.0);
 }
 """
 
@@ -51,12 +46,9 @@ glBindVertexArray(vao)
 vbo = GLuint()
 glGenBuffers(1, pointer(vbo)) # Generate 1 buffer
 
-##          Position    Color          Texcoords
-vertices = [-0.5,  0.5, 1.0, 0.0, 0.0, 0.0, 1.0, # Top-left
-		     0.5,  0.5, 0.0, 1.0, 0.0, 1.0, 1.0, # Top-right
-		     0.5, -0.5, 0.0, 0.0, 1.0, 1.0, 0.0, # Bottom-right
-		    -0.5, -0.5, 1.0, 1.0, 1.0, 0.0, 0.0]  # Bottom-left
-
+vertices = [0.0, 0.5,
+			0.5, -0.5,
+			-0.5, -0.5]
 ## Convert the verteces array to a GLfloat array, usable by glBufferData
 vertices_ctype = (GLfloat * len(vertices))(*vertices)
 
@@ -65,7 +57,7 @@ glBindBuffer(GL_ARRAY_BUFFER, vbo)
 glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_ctype), vertices_ctype, GL_STATIC_DRAW)
 
 
-# Compile shaders and combining them into a program 
+# Compile shaders and combining them into a program
 ## Create and compile the vertex shader
 count = len(vertexSource)
 src = (c_char_p * count)(*vertexSource)
@@ -89,56 +81,27 @@ glLinkProgram(shaderProgram)
 glUseProgram(shaderProgram)
 
 
-# Element array
-ebo = GLuint()
-glGenBuffers(1, pointer(ebo))
-
-elements = [0, 1, 2,
-			2, 3, 0]
-elements_ctype = (GLuint * len(elements))(*elements)
-
-glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo)
-glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements_ctype), elements_ctype, GL_STATIC_DRAW)
-
-
 # Making the link between vertex data and attributes
 posAttrib = glGetAttribLocation(shaderProgram, "position")
 glEnableVertexAttribArray(posAttrib)
-glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), 0)
+glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0)
 
-colAttrib = glGetAttribLocation(shaderProgram, "color")
-glEnableVertexAttribArray(colAttrib)
-glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), 2 * sizeof(GLfloat))
-
-texAttrib = glGetAttribLocation(shaderProgram, "texcoord")
-glEnableVertexAttribArray(texAttrib)
-glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), 5 * sizeof(GLfloat))
-
-
-# Load texture
-tex = GLuint()
-glGenTextures(1, pointer(tex))
-
-image = pyglet.image.load("sample.png")
-width, height = image.width, image.height
-image = image.get_data('RGB', width * 3)
-glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image)
-
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+uniColor = glGetUniformLocation(shaderProgram, "triangleColor")
 
 
 @window.event
 def on_draw():
+	# Set the color of the triangle
+	alpha = (math.sin(time.clock() * 4.0) + 1.0) / 2.0
+	glUniform3f(uniColor, alpha, 0.0, 0.0)
+
 	# Set clear color
 	glClearColor(0.0, 0.0, 0.0, 1.0)
 	# Clear the screen to black
 	glClear(GL_COLOR_BUFFER_BIT)
 
-	# Draw a rectangle from the 2 triangles using 6 indices
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0)
+	# Draw a triangle from the 3 vertices
+	glDrawArrays(GL_TRIANGLES, 0, 3)
 
 @window.event
 def on_key_press(symbol, modifiers):

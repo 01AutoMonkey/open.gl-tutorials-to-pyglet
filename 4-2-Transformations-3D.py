@@ -1,3 +1,6 @@
+# Tutorial: https://open.gl/transformations
+# Original Sample Code: https://github.com/Overv/Open.GL/blob/master/content/code/c4_3d.txt
+
 import pyglet
 from pyglet.gl import *
 from ctypes import *
@@ -13,7 +16,7 @@ window.set_location(100, 100)
 vertexSource = """
 #version 150
 
-in vec3 position;
+in vec2 position;
 in vec3 color;
 in vec2 texcoord;
 
@@ -27,7 +30,7 @@ uniform mat4 proj;
 void main() {
 	Color = color;
 	Texcoord = texcoord;
-	gl_Position = proj * view * model * vec4(position, 1.0);
+	gl_Position = proj * view * model * vec4(position, 0.0, 1.0);
 }
 """
 fragmentSource = """
@@ -42,7 +45,7 @@ uniform sampler2D texKitten;
 uniform sampler2D texPuppy;
 
 void main() {
-	outColor = vec4(Color, 1.0) * mix(texture(texKitten, Texcoord), texture(texPuppy, Texcoord), 0.5);
+	outColor = mix(texture(texKitten, Texcoord), texture(texPuppy, Texcoord), 0.5);
 }
 """
 
@@ -57,48 +60,12 @@ glBindVertexArray(vao)
 vbo = GLuint()
 glGenBuffers(1, pointer(vbo)) # Generate 1 buffer
 
-vertices = [-0.5, -0.5, -0.5, 1.0, 1.0, 1.0, 0.0, 0.0,
-			 0.5, -0.5, -0.5, 1.0, 1.0, 1.0, 1.0, 0.0,
-			 0.5,  0.5, -0.5, 1.0, 1.0, 1.0, 1.0, 1.0,
-			 0.5,  0.5, -0.5, 1.0, 1.0, 1.0, 1.0, 1.0,
-			-0.5,  0.5, -0.5, 1.0, 1.0, 1.0, 0.0, 1.0,
-			-0.5, -0.5, -0.5, 1.0, 1.0, 1.0, 0.0, 0.0,
+##          Position    Color          Texcoords
+vertices = [-0.5,  0.5, 1.0, 0.0, 0.0, 0.0, 1.0, # Top-left
+		     0.5,  0.5, 0.0, 1.0, 0.0, 1.0, 1.0, # Top-right
+		     0.5, -0.5, 0.0, 0.0, 1.0, 1.0, 0.0, # Bottom-right
+		    -0.5, -0.5, 1.0, 1.0, 1.0, 0.0, 0.0]  # Bottom-left
 
-			-0.5, -0.5,  0.5, 1.0, 1.0, 1.0, 0.0, 0.0,
-			 0.5, -0.5,  0.5, 1.0, 1.0, 1.0, 1.0, 0.0,
-			 0.5,  0.5,  0.5, 1.0, 1.0, 1.0, 1.0, 1.0,
-			 0.5,  0.5,  0.5, 1.0, 1.0, 1.0, 1.0, 1.0,
-			-0.5,  0.5,  0.5, 1.0, 1.0, 1.0, 0.0, 1.0,
-			-0.5, -0.5,  0.5, 1.0, 1.0, 1.0, 0.0, 0.0,
-
-			-0.5,  0.5,  0.5, 1.0, 1.0, 1.0, 1.0, 0.0,
-			-0.5,  0.5, -0.5, 1.0, 1.0, 1.0, 1.0, 1.0,
-			-0.5, -0.5, -0.5, 1.0, 1.0, 1.0, 0.0, 1.0,
-			-0.5, -0.5, -0.5, 1.0, 1.0, 1.0, 0.0, 1.0,
-			-0.5, -0.5,  0.5, 1.0, 1.0, 1.0, 0.0, 0.0,
-			-0.5,  0.5,  0.5, 1.0, 1.0, 1.0, 1.0, 0.0,
-
-			 0.5,  0.5,  0.5, 1.0, 1.0, 1.0, 1.0, 0.0,
-			 0.5,  0.5, -0.5, 1.0, 1.0, 1.0, 1.0, 1.0,
-			 0.5, -0.5, -0.5, 1.0, 1.0, 1.0, 0.0, 1.0,
-			 0.5, -0.5, -0.5, 1.0, 1.0, 1.0, 0.0, 1.0,
-			 0.5, -0.5,  0.5, 1.0, 1.0, 1.0, 0.0, 0.0,
-			 0.5,  0.5,  0.5, 1.0, 1.0, 1.0, 1.0, 0.0,
-
-			-0.5, -0.5, -0.5, 1.0, 1.0, 1.0, 0.0, 1.0,
-			 0.5, -0.5, -0.5, 1.0, 1.0, 1.0, 1.0, 1.0,
-			 0.5, -0.5,  0.5, 1.0, 1.0, 1.0, 1.0, 0.0,
-			 0.5, -0.5,  0.5, 1.0, 1.0, 1.0, 1.0, 0.0,
-			-0.5, -0.5,  0.5, 1.0, 1.0, 1.0, 0.0, 0.0,
-			-0.5, -0.5, -0.5, 1.0, 1.0, 1.0, 0.0, 1.0,
-
-			-0.5,  0.5, -0.5, 1.0, 1.0, 1.0, 0.0, 1.0,
-			 0.5,  0.5, -0.5, 1.0, 1.0, 1.0, 1.0, 1.0,
-			 0.5,  0.5,  0.5, 1.0, 1.0, 1.0, 1.0, 0.0,
-			 0.5,  0.5,  0.5, 1.0, 1.0, 1.0, 1.0, 0.0,
-			-0.5,  0.5,  0.5, 1.0, 1.0, 1.0, 0.0, 0.0,
-			-0.5,  0.5, -0.5, 1.0, 1.0, 1.0, 0.0, 1.0]
-			
 ## Convert the verteces array to a GLfloat array, usable by glBufferData
 vertices_gl = (GLfloat * len(vertices))(*vertices)
 
@@ -107,7 +74,7 @@ glBindBuffer(GL_ARRAY_BUFFER, vbo)
 glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_gl), vertices_gl, GL_STATIC_DRAW)
 
 
-# Compile shaders and combining them into a program 
+# Compile shaders and combining them into a program
 ## Create and compile the vertex shader
 count = len(vertexSource)
 src = (c_char_p * count)(*vertexSource)
@@ -146,15 +113,16 @@ glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements_gl), elements_gl, GL_STATI
 # Making the link between vertex data and attributes
 posAttrib = glGetAttribLocation(shaderProgram, "position")
 glEnableVertexAttribArray(posAttrib)
-glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), 0)
+glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), 0)
 
-colAttrib = glGetAttribLocation(shaderProgram, "color")
-glEnableVertexAttribArray(colAttrib)
-glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), 3 * sizeof(GLfloat))
+## colAttrib returns -1 (is not used)
+#colAttrib = glGetAttribLocation(shaderProgram, "color")
+#glEnableVertexAttribArray(colAttrib)
+#glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), 2 * sizeof(GLfloat))
 
 texAttrib = glGetAttribLocation(shaderProgram, "texcoord")
 glEnableVertexAttribArray(texAttrib)
-glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), 6 * sizeof(GLfloat))
+glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), 5 * sizeof(GLfloat))
 
 
 # Load textures
@@ -191,11 +159,8 @@ glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
 
-
-uniModel = glGetUniformLocation(shaderProgram, "model")
-
 # Set up projection
-eye = Vector3(1.5, 1.5, 1.5)
+eye = Vector3(1.2, 1.2, 1.2)
 at = Vector3(0.0, 0.0, 0.0)
 up = Vector3(0.0, 0.0, 1.0)
 view = Matrix4.new_look_at(eye, at, up)
@@ -210,6 +175,8 @@ proj_ctype = (GLfloat * len(proj))(*proj)
 uniProj = glGetUniformLocation(shaderProgram, "proj")
 glUniformMatrix4fv(uniProj, 1, GL_FALSE, proj_ctype)
 
+uniModel = glGetUniformLocation(shaderProgram, "model")
+
 
 @window.event
 def on_draw():
@@ -217,7 +184,7 @@ def on_draw():
 	glClearColor(0.0, 0.0, 0.0, 1.0)
 	# Clear the screen to black
 	glClear(GL_COLOR_BUFFER_BIT)
-	
+
 	# Calculate transformation
 	model = Quaternion.new_rotate_axis(time.clock() * math.pi, Vector3(0, 0, 1))
 	model = model.get_matrix()
@@ -226,7 +193,7 @@ def on_draw():
 	glUniformMatrix4fv(uniModel, 1, GL_FALSE, model_ctype)
 
 	# Draw a rectangle from the 2 triangles using 6 indices
-	glDrawArrays(GL_TRIANGLES, 0, 36)
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0)
 
 @window.event
 def on_key_press(symbol, modifiers):

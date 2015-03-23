@@ -1,3 +1,6 @@
+# Tutorial: https://open.gl/depthstencils
+# Original Sample Code: https://github.com/Overv/Open.GL/blob/master/content/code/c5_reflection.txt
+
 import pyglet
 from pyglet.gl import *
 from ctypes import *
@@ -111,7 +114,7 @@ vertices = [-0.5, -0.5, -0.5, 1.0, 1.0, 1.0, 0.0, 0.0,
 			-1.0,  1.0, -0.5, 0.0, 0.0, 0.0, 0.0, 1.0,
 			-1.0, -1.0, -0.5, 0.0, 0.0, 0.0, 0.0, 0.0
 			]
-			
+
 ## Convert the verteces array to a GLfloat array, usable by glBufferData
 vertices_gl = (GLfloat * len(vertices))(*vertices)
 
@@ -120,7 +123,7 @@ glBindBuffer(GL_ARRAY_BUFFER, vbo)
 glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_gl), vertices_gl, GL_STATIC_DRAW)
 
 
-# Compile shaders and combining them into a program 
+# Compile shaders and combining them into a program
 ## Create and compile the vertex shader
 count = len(vertexSource)
 src = (c_char_p * count)(*vertexSource)
@@ -219,7 +222,7 @@ def on_draw():
 	glClearColor(1.0, 1.0, 1.0, 1.0)
 	# Clear the screen to white and ?
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-	
+
 	# Calculate transformation
 	model = Quaternion.new_rotate_axis(time.clock() * math.pi, Vector3(0, 0, 1))
 	model = model.get_matrix()
@@ -238,7 +241,7 @@ def on_draw():
 	glStencilMask(0xFF)
 	glDepthMask(GL_FALSE)
 	glClear(GL_STENCIL_BUFFER_BIT)
-	    
+
 	glDrawArrays(GL_TRIANGLES, 36, 6)
 
 	# Draw cube reflection

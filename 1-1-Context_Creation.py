@@ -1,3 +1,6 @@
+# Tutorial: https://open.gl/context
+# Original Sample Code: ...
+
 import pyglet
 from pyglet.gl import *
 

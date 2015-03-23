@@ -1,3 +1,6 @@
+# Tutorial: https://open.gl/drawing
+# Original Sample Code: https://github.com/Overv/Open.GL/blob/master/content/code/c2_color_triangle.txt
+
 import pyglet
 from pyglet.gl import *
 from ctypes import *
@@ -13,22 +16,26 @@ vertexSource = """
 #version 150 core
 
 in vec2 position;
+in vec3 color;
+
+out vec3 Color;
 
 void main()
 {
+	Color = color;
 	gl_Position = vec4(position, 0.0, 1.0);
 }
 """
 fragmentSource = """
 #version 150 core
 
-uniform vec3 triangleColor;
+in vec3 Color;
 
 out vec4 outColor;
 
 void main()
 {
-	outColor = vec4(triangleColor, 1.0);
+	outColor = vec4(Color, 1.0);
 }
 """
 
@@ -43,9 +50,9 @@ glBindVertexArray(vao)
 vbo = GLuint()
 glGenBuffers(1, pointer(vbo)) # Generate 1 buffer
 
-vertices = [0.0, 0.5,
-			0.5, -0.5,
-			-0.5, -0.5]
+vertices = [0.0, 0.5, 1.0, 0.0, 0.0,
+			0.5, -0.5, 0.0, 1.0, 0.0,
+			-0.5, -0.5, 0.0, 0.0, 1.0]
 ## Convert the verteces array to a GLfloat array, usable by glBufferData
 vertices_ctype = (GLfloat * len(vertices))(*vertices)
 
@@ -54,7 +61,7 @@ glBindBuffer(GL_ARRAY_BUFFER, vbo)
 glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_ctype), vertices_ctype, GL_STATIC_DRAW)
 
 
-# Compile shaders and combining them into a program 
+# Compile shaders and combining them into a program
 ## Create and compile the vertex shader
 count = len(vertexSource)
 src = (c_char_p * count)(*vertexSource)
@@ -81,17 +88,17 @@ glUseProgram(shaderProgram)
 # Making the link between vertex data and attributes
 posAttrib = glGetAttribLocation(shaderProgram, "position")
 glEnableVertexAttribArray(posAttrib)
-glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0)
+glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE,
+						5*sizeof(GLfloat), 0)
 
-uniColor = glGetUniformLocation(shaderProgram, "triangleColor")
+colAttrib = glGetAttribLocation(shaderProgram, "color")
+glEnableVertexAttribArray(colAttrib)
+glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE,
+                       5*sizeof(GLfloat), 2*sizeof(GLfloat))
 
 
 @window.event
 def on_draw():
-	# Set the color of the triangle
-	alpha = (math.sin(time.clock() * 4.0) + 1.0) / 2.0
-	glUniform3f(uniColor, alpha, 0.0, 0.0)
-
 	# Set clear color
 	glClearColor(0.0, 0.0, 0.0, 1.0)
 	# Clear the screen to black

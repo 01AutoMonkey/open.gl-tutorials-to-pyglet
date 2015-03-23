@@ -1,3 +1,6 @@
+# Tutorial: https://open.gl/drawing
+# Original Sample Code: https://github.com/Overv/Open.GL/blob/master/content/code/c2_triangle_elements.txt
+
 import pyglet
 from pyglet.gl import *
 from ctypes import *
@@ -59,7 +62,7 @@ glBindBuffer(GL_ARRAY_BUFFER, vbo)
 glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_ctype), vertices_ctype, GL_STATIC_DRAW)
 
 
-# Compile shaders and combining them into a program 
+# Compile shaders and combining them into a program
 ## Create and compile the vertex shader
 count = len(vertexSource)
 src = (c_char_p * count)(*vertexSource)
