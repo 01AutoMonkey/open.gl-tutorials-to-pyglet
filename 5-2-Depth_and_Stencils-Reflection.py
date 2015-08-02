@@ -14,7 +14,7 @@ window.set_location(100, 100)
 
 # Shaders (Vertex and Fragment shaders)
 vertexSource = """
-#version 150
+#version 130
 
 in vec3 position;
 in vec3 color;
@@ -35,7 +35,7 @@ void main() {
 }
 """
 fragmentSource = """
-#version 150 core
+#version 130
 
 in vec3 Color;
 in vec2 Texcoord;
